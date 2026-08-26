@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const sourceUrl = './visual.js?v=20260826-unity-scale-1';
+  const sourceUrl = './visual.js?v=20260826-unity-proportion-2';
   const loading = document.getElementById('loading');
 
   async function loadSource(cache) {
@@ -31,6 +31,10 @@
       [
         'unityLabel.style.top=`${height*.5+unit*.045}px`;',
         'unityLabel.style.top=`${height*.5+unit*.072}px`;'
+      ],
+      [
+        '      element.style.top=`${point.y-point.r*1.65}px`;',
+        "      const labelLift=key==='reality'?1.05:1.65;\n      element.style.top=`${point.y-point.r*labelLift}px`;"
       ]
     ];
 
