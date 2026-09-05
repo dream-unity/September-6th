@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
   <meta name="description" content="Dream Unity front-page 3D visualization." />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Dream Unity</title>
-  <link rel="stylesheet" href="./styles.css?v=20260826-unity-proportion-2" />
+  <link rel="stylesheet" href="./styles.css?v=20260905-utc10-2" />
 </head>
 <body>
   <main id="app" aria-label="Dream Unity front-page 3D visualization">
@@ -14,10 +17,10 @@
     <div class="brand"><i></i><span>DREAM UNITY</span></div>
     <div class="live"><i></i><span>LIVE</span></div>
 
-    <div class="unlock-countdown" id="unlockCountdown" role="timer" aria-live="off" aria-label="Countdown until September 6, 2026 in Honolulu, Hawaii">
+    <div class="unlock-countdown" id="unlockCountdown" role="timer" aria-live="off" aria-label="Countdown until September 6, 2026 at midnight in UTC minus 10">
       <span>UNLOCKED IN</span>
       <strong id="countdownValue">--D&nbsp;&nbsp;--:--:--</strong>
-      <small>HONOLULU · 6 SEP</small>
+      <small>UTC−10 · 6 SEP</small>
     </div>
 
     <div class="world-label" id="label-machine" data-world="machine" aria-hidden="true">
@@ -36,8 +39,55 @@
   </main>
 
   <noscript>This experience requires JavaScript.</noscript>
-  <script src="./light-theme.js?v=20260826-front-only-1"></script>
-  <script src="./visual-loader.js?v=20260826-dream-world-spin-1"></script>
-  <script src="./countdown.js?v=20260905-honolulu-countdown-1"></script>
+  <script src="./light-theme.js?v=20260905-utc10-2"></script>
+  <script src="./visual-loader.js?v=20260905-utc10-2"></script>
+  <script>
+  (() => {
+    'use strict';
+
+    const root = document.getElementById('unlockCountdown');
+    const value = document.getElementById('countdownValue');
+    if (!root || !value) return;
+
+    // Midnight at the start of 6 September 2026 in UTC−10.
+    // 2026-09-06 00:00:00 UTC−10 = 2026-09-06 10:00:00 UTC.
+    const unlockAt = Date.parse('2026-09-06T10:00:00.000Z');
+    const SECOND = 1000;
+    const MINUTE = 60 * SECOND;
+    const HOUR = 60 * MINUTE;
+    const DAY = 24 * HOUR;
+    let timer = 0;
+
+    const two = number => String(number).padStart(2, '0');
+
+    function render() {
+      const remaining = Math.max(0, unlockAt - Date.now());
+
+      if (remaining <= 0) {
+        value.textContent = 'UNLOCKED';
+        root.classList.add('unlocked');
+        root.setAttribute('aria-label', 'Unlocked');
+        if (timer) clearTimeout(timer);
+        return;
+      }
+
+      const days = Math.floor(remaining / DAY);
+      const hours = Math.floor((remaining % DAY) / HOUR);
+      const minutes = Math.floor((remaining % HOUR) / MINUTE);
+      const seconds = Math.floor((remaining % MINUTE) / SECOND);
+
+      value.textContent = `${two(days)}D  ${two(hours)}:${two(minutes)}:${two(seconds)}`;
+      root.setAttribute(
+        'aria-label',
+        `Unlocked in ${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`
+      );
+
+      const delay = Math.max(50, SECOND - (Date.now() % SECOND) + 12);
+      timer = window.setTimeout(render, delay);
+    }
+
+    render();
+  })();
+  </script>
 </body>
 </html>
