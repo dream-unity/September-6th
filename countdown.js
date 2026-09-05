@@ -5,10 +5,10 @@
   const value = document.getElementById('countdownValue');
   if (!root || !value) return;
 
-  // September 6, 2026 at 12:00:00 am in Israel.
-  // Israel is observing IDT (UTC+3) on this date, so fixing the instant in UTC
-  // keeps the deadline identical even when the page is opened elsewhere.
-  const unlockAt = Date.parse('2026-09-05T21:00:00.000Z');
+  // September 6, 2026 at 12:00:00 am in Honolulu / UTC-10.
+  // Fixing the instant in UTC keeps the deadline identical everywhere:
+  // 2026-09-06 00:00:00 UTC-10 = 2026-09-06 10:00:00 UTC.
+  const unlockAt = Date.parse('2026-09-06T10:00:00.000Z');
   const SECOND = 1000;
   const MINUTE = 60 * SECOND;
   const HOUR = 60 * MINUTE;
