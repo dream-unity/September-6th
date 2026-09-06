@@ -125,6 +125,26 @@ body{font-family:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;color
 </div>
 </main>
 <h1 class="brand"><span>Dream Unity</span></h1>
-<script>(()=>{const z=Date.parse('2026-09-05T21:00:00.000Z'),S=1e3,M=60*S,H=60*M,D=24*H,$=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),timer=document.querySelector('[role="timer"]');function tick(){const e=Math.max(0,Date.now()-z),d=Math.floor(e/D),h=Math.floor(e%D/H),m=Math.floor(e%H/M),s=Math.floor(e%M/S);$('days').textContent=pad(d);$('hours').textContent=pad(h);$('minutes').textContent=pad(m);$('seconds').textContent=pad(s);timer.setAttribute('aria-label',`Time elapsed since September 6 began: ${d} days, ${h} hours, ${m} minutes and ${s} seconds`);setTimeout(tick,Math.max(40,S-(Date.now()%S)+8))}tick()})();</script>
+<audio id="dreamUnitySoundtrack" autoplay loop preload="auto" playsinline aria-hidden="true">
+  <source src="https://raw.githubusercontent.com/dream-unity/one/main/assets/audio/dream-maker-eye.mp3" type="audio/mpeg" />
+</audio>
+<script>
+(()=>{const z=Date.parse('2026-09-05T21:00:00.000Z'),S=1e3,M=60*S,H=60*M,D=24*H,$=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),timer=document.querySelector('[role="timer"]');function tick(){const e=Math.max(0,Date.now()-z),d=Math.floor(e/D),h=Math.floor(e%D/H),m=Math.floor(e%H/M),s=Math.floor(e%M/S);$('days').textContent=pad(d);$('hours').textContent=pad(h);$('minutes').textContent=pad(m);$('seconds').textContent=pad(s);timer.setAttribute('aria-label',`Time elapsed since September 6 began: ${d} days, ${h} hours, ${m} minutes and ${s} seconds`);setTimeout(tick,Math.max(40,S-(Date.now()%S)+8))}tick()})();
+(()=>{
+  const audio=document.getElementById('dreamUnitySoundtrack');
+  if(!audio)return;
+  audio.volume=1;
+  const play=()=>{
+    audio.muted=false;
+    const attempt=audio.play();
+    if(attempt&&typeof attempt.catch==='function')attempt.catch(()=>{});
+  };
+  play();
+  window.addEventListener('load',play,{once:true});
+  audio.addEventListener('canplay',play,{once:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&audio.paused)play()});
+  ['pointerdown','touchstart','keydown'].forEach(type=>window.addEventListener(type,play,{once:true,capture:true}));
+})();
+</script>
 </body>
 </html>
