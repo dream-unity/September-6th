@@ -1,398 +1,254 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#02050a" />
-  <meta name="description" content="Dream Unity — September 6 release transmission." />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>Dream Unity — September 6</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg0: #02050a;
-      --paper: #f4f6f8;
-      --text: rgba(244,246,248,.93);
-      --muted: rgba(224,231,238,.74);
-      --line: rgba(219,228,237,.16);
-      --red: #ff3f49;
-      --red-soft: rgba(255,63,73,.24);
-    }
-    * { box-sizing: border-box; }
-    html { background: var(--bg0); }
-    body {
-      margin: 0;
-      min-width: 100%;
-      min-height: 100dvh;
-      overflow-x: hidden;
-      overflow-y: auto;
-      color: var(--text);
-      background:
-        radial-gradient(900px 620px at 14% 43%, rgba(21,55,82,.24), transparent 66%),
-        radial-gradient(820px 520px at 86% 30%, rgba(42,49,67,.14), transparent 68%),
-        linear-gradient(180deg, #02050a 0%, #050a11 52%, #020408 100%);
-      font-family: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-    }
-    .backdrop,.grid,.scanlines,.grain,.vignette,.frame,.globe,.signal {
-      position: fixed; inset: 0; pointer-events: none;
-    }
-    .backdrop {
-      z-index: 0;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.012), transparent 18%, transparent 82%, rgba(255,255,255,.01)),
-        radial-gradient(ellipse at 50% 44%, rgba(74,103,128,.08), transparent 55%);
-    }
-    .grid {
-      z-index: 0; opacity: .22;
-      background-image:
-        linear-gradient(rgba(179,200,220,.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(179,200,220,.04) 1px, transparent 1px);
-      background-size: 58px 58px;
-      mask-image: radial-gradient(ellipse at center, #000 18%, rgba(0,0,0,.68) 52%, transparent 92%);
-      -webkit-mask-image: radial-gradient(ellipse at center, #000 18%, rgba(0,0,0,.68) 52%, transparent 92%);
-    }
-    .scanlines {
-      z-index: 1; opacity: .08; mix-blend-mode: soft-light;
-      background: repeating-linear-gradient(180deg, rgba(255,255,255,.20) 0 1px, transparent 1px 4px);
-    }
-    .grain {
-      z-index: 4; opacity: .055; mix-blend-mode: screen;
-      background-image:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.7) 0 .45px, transparent .55px),
-        radial-gradient(circle at 70% 60%, rgba(255,255,255,.6) 0 .4px, transparent .5px);
-      background-size: 7px 7px, 11px 11px;
-    }
-    .vignette { z-index: 3; box-shadow: inset 0 0 17vw 7vw rgba(0,0,0,.78); }
-    .frame {
-      z-index: 5;
-      inset: clamp(9px, 1.3vw, 18px);
-      border: 1px solid rgba(226,235,243,.075);
-    }
-    .frame::before,.frame::after {
-      content: ""; position: absolute; width: 22px; height: 22px;
-      border-top: 2px solid rgba(241,245,248,.56); top: -1px;
-    }
-    .frame::before { left: -1px; border-left: 2px solid rgba(241,245,248,.56); }
-    .frame::after { right: -1px; border-right: 2px solid rgba(241,245,248,.56); }
-    .globe {
-      z-index: 0;
-      left: -35vw; right: auto; top: 8vh; bottom: auto;
-      width: min(72vw, 900px); height: min(72vw, 900px);
-      border-radius: 50%; opacity: .82;
-      background:
-        radial-gradient(circle at 68% 43%, transparent 0 49%, rgba(160,196,224,.14) 49.3% 49.8%, transparent 50.1%),
-        radial-gradient(circle at 61% 41%, rgba(102,156,195,.15), rgba(19,52,78,.18) 34%, rgba(5,13,23,.92) 72%),
-        repeating-radial-gradient(circle at 62% 42%, transparent 0 34px, rgba(135,180,210,.055) 35px, transparent 36px 70px),
-        repeating-linear-gradient(78deg, transparent 0 47px, rgba(146,188,216,.05) 48px, transparent 49px 96px);
-      box-shadow:
-        inset -80px -50px 120px rgba(0,0,0,.74),
-        28px 0 60px rgba(58,112,150,.11),
-        72px 0 130px rgba(57,107,145,.08);
-      transform: rotate(-7deg);
-      filter: saturate(.75);
-    }
-    .globe::after {
-      content: ""; position: absolute; inset: 7%; border-radius: 50%;
-      border: 1px solid rgba(154,193,220,.08);
-      box-shadow: inset 0 0 60px rgba(54,106,142,.12);
-    }
-    .signal {
-      z-index: 2; opacity: .55;
-      background:
-        radial-gradient(circle at 15% 42%, rgba(255,63,73,.13) 0 1px, transparent 2px 100%),
-        radial-gradient(circle at 15% 42%, transparent 0 44px, rgba(255,63,73,.13) 45px 46px, transparent 47px 86px, rgba(255,63,73,.07) 87px 88px, transparent 89px);
-      animation: signal-pulse 3.8s ease-in-out infinite;
-    }
-    @keyframes signal-pulse { 0%,100% { opacity:.33; } 50% { opacity:.72; } }
-    main {
-      position: relative; z-index: 2; min-height: 100dvh; width: 100%;
-      display: flex; align-items: center; justify-content: center;
-      padding:
-        max(34px, env(safe-area-inset-top))
-        max(24px, env(safe-area-inset-right))
-        max(36px, env(safe-area-inset-bottom))
-        max(24px, env(safe-area-inset-left));
-    }
-    .shell { width: min(1060px, 94vw); margin: auto; text-align: center; }
-    .brand {
-      display: inline-flex; align-items: center; justify-content: center; gap: 15px;
-      margin: 0 0 clamp(14px, 2.2vh, 22px);
-      color: rgba(241,245,248,.82);
-      font-size: clamp(13px, 1.15vw, 16px);
-      font-weight: 700; letter-spacing: .42em; text-transform: uppercase;
-    }
-    .brand::before,.brand::after {
-      content: ""; width: clamp(30px, 5vw, 66px); height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(235,241,246,.48));
-    }
-    .brand::after { transform: scaleX(-1); }
-    .kicker {
-      margin: 0; color: var(--red);
-      font-size: clamp(13px, 1.15vw, 17px); line-height: 1.2;
-      font-weight: 700; letter-spacing: .34em; text-transform: uppercase;
-    }
-    h1 {
-      width: min(860px, 95%);
-      margin: clamp(14px, 2.4vh, 24px) auto 0;
-      color: var(--paper);
-      font-size: clamp(46px, 6.1vw, 76px);
-      line-height: .94; font-weight: 800; letter-spacing: .015em;
-      text-transform: uppercase;
-      text-shadow: 0 10px 28px rgba(0,0,0,.52), 0 0 18px rgba(255,255,255,.04);
-      text-wrap: balance;
-    }
-    .red-rule {
-      width: 44px; height: 2px;
-      margin: clamp(18px, 2.7vh, 26px) auto 0;
-      background: var(--red); box-shadow: 0 0 12px var(--red-soft);
-    }
-    .intro {
-      width: min(820px, 94%);
-      margin: clamp(16px, 2.4vh, 24px) auto 0;
-      color: var(--muted);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: clamp(16px, 1.35vw, 20px);
-      line-height: 1.58; font-weight: 430; text-wrap: balance;
-    }
-    .intro strong { color: rgba(250,251,252,.98); font-weight: 650; }
-    .definition {
-      width: min(830px, 94%);
-      margin: clamp(16px, 2.4vh, 22px) auto 0;
-      padding: 12px 18px;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(90deg, transparent, rgba(15,25,35,.56), transparent);
-      color: rgba(229,235,241,.82);
-      font-family: "IBM Plex Mono", Consolas, monospace;
-      font-size: clamp(12px, 1vw, 14px);
-      line-height: 1.55; letter-spacing: .045em;
-    }
-    .definition b { color: #fff; font-weight: 600; }
-    .timer-section { width: min(960px, 100%); margin: clamp(20px, 3.2vh, 30px) auto 0; }
-    .timer-label {
-      display: flex; align-items: center; justify-content: center; gap: 13px;
-      margin: 0 0 10px;
-      color: rgba(236,241,246,.82);
-      font-size: clamp(12px, 1vw, 14px); font-weight: 600;
-      letter-spacing: .28em; text-transform: uppercase;
-    }
-    .timer-label::before,.timer-label::after {
-      content: ""; width: clamp(26px, 4vw, 56px); height: 1px;
-      background: linear-gradient(90deg, transparent, var(--red));
-    }
-    .timer-label::after { transform: scaleX(-1); }
-    .counter-panel {
-      position: relative; overflow: hidden;
-      border: 1px solid rgba(224,233,241,.15);
-      background:
-        linear-gradient(180deg, rgba(10,17,25,.88), rgba(4,8,13,.76)),
-        radial-gradient(circle at 50% 0%, rgba(255,63,73,.05), transparent 38%);
-      box-shadow: 0 16px 46px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.035);
-    }
-    .counter-panel::before,.counter-panel::after {
-      content: ""; position: absolute; width: 18px; height: 18px;
-      border-color: var(--red); opacity: .85; pointer-events: none;
-    }
-    .counter-panel::before { left:-1px; top:-1px; border-left:2px solid; border-top:2px solid; }
-    .counter-panel::after { right:-1px; bottom:-1px; border-right:2px solid; border-bottom:2px solid; }
-    .counter {
-      display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
-      min-height: 148px; align-items: center; padding: 10px 12px 9px;
-    }
-    .unit { position: relative; min-width: 0; padding: 8px 12px; }
-    .unit + .unit::before {
-      content: ""; position: absolute; top: 14%; bottom: 14%; left: 0; width: 1px;
-      background: linear-gradient(180deg, transparent, rgba(255,63,73,.38), transparent);
-    }
-    .value {
-      display: block; color: #fff;
-      font-size: clamp(50px, 6.2vw, 76px); line-height: .95;
-      font-weight: 700; letter-spacing: .035em;
-      font-variant-numeric: tabular-nums lining-nums;
-      text-shadow: 0 0 20px rgba(255,63,73,.12);
-    }
-    .unit-label {
-      display: block; margin-top: 9px;
-      color: rgba(227,234,240,.74);
-      font-size: clamp(12px, 1vw, 14px); line-height: 1;
-      font-weight: 600; letter-spacing: .24em; text-transform: uppercase;
-    }
-    .time-strip {
-      width: min(900px, 96%); margin: 14px auto 0;
-      padding: 12px 18px 11px;
-      border: 1px solid rgba(224,233,241,.13);
-      background: rgba(4,9,14,.68);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
-    }
-    .time-now,.zero-row {
-      margin: 0;
-      font-family: "IBM Plex Mono", Consolas, monospace;
-      font-variant-numeric: tabular-nums lining-nums;
-      text-transform: uppercase; text-align: center;
-    }
-    .time-now {
-      color: rgba(248,250,252,.94);
-      font-size: clamp(12px, 1.12vw, 16px);
-      line-height: 1.5; font-weight: 600; letter-spacing: .10em;
-    }
-    .zero-row {
-      margin-top: 4px; color: rgba(211,220,228,.66);
-      font-size: clamp(11px, .95vw, 14px);
-      line-height: 1.5; font-weight: 500; letter-spacing: .07em;
-    }
-    .closing {
-      width: min(760px, 92%);
-      margin: clamp(18px, 2.8vh, 26px) auto 0;
-      color: rgba(232,238,243,.80);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: clamp(15px, 1.25vw, 18px); line-height: 1.55; text-wrap: balance;
-    }
-    .closing strong { color: #fff; font-weight: 650; }
-    .footer-status {
-      display: inline-flex; align-items: center; gap: 11px;
-      margin-top: clamp(15px, 2.2vh, 22px);
-      color: rgba(203,213,222,.50);
-      font-family: "IBM Plex Mono", Consolas, monospace;
-      font-size: clamp(10px, .82vw, 12px); line-height: 1.3;
-      letter-spacing: .15em; text-transform: uppercase;
-    }
-    .footer-status::before,.footer-status::after {
-      content: ""; width: 22px; height: 1px; background: var(--red); opacity: .72;
-    }
-    @media (max-width: 760px) {
-      main { padding-left: 18px; padding-right: 18px; }
-      .shell { width: min(620px, 96vw); }
-      h1 { font-size: clamp(40px, 12vw, 58px); width: 100%; }
-      .intro { font-size: clamp(16px, 4.6vw, 19px); width: 100%; }
-      .definition { width: 100%; font-size: clamp(11px, 3vw, 13px); }
-      .counter { grid-template-columns: repeat(2, minmax(0,1fr)); min-height: 0; padding: 8px; }
-      .unit { padding: 14px 8px; }
-      .unit:nth-child(3)::before { display: none; }
-      .unit:nth-child(-n+2)::after {
-        content: ""; position: absolute; left: 14%; right: 14%; bottom: 0; height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(225,234,241,.12), transparent);
-      }
-      .value { font-size: clamp(50px, 14vw, 68px); }
-      .time-strip { width: 100%; padding-left: 10px; padding-right: 10px; }
-      .time-now { font-size: clamp(11px, 3vw, 13px); }
-      .zero-row { font-size: clamp(10px, 2.8vw, 12px); }
-      .globe { left: -66vw; width: 118vw; height: 118vw; top: 24vh; opacity: .52; }
-    }
-    @media (max-height: 760px) and (min-width: 761px) {
-      main { align-items: flex-start; padding-top: 22px; padding-bottom: 24px; }
-      .brand { margin-bottom: 10px; }
-      .kicker { font-size: 12px; }
-      h1 { margin-top: 10px; font-size: clamp(38px, 5.2vw, 58px); }
-      .red-rule { margin-top: 13px; }
-      .intro { margin-top: 12px; font-size: 15px; line-height: 1.46; }
-      .definition { margin-top: 11px; padding-top: 8px; padding-bottom: 8px; font-size: 11px; }
-      .timer-section { margin-top: 13px; }
-      .counter { min-height: 112px; }
-      .value { font-size: clamp(40px, 5vw, 58px); }
-      .unit-label { margin-top: 6px; font-size: 11px; }
-      .time-strip { margin-top: 9px; padding-top: 7px; padding-bottom: 7px; }
-      .time-now { font-size: 11px; }
-      .zero-row { font-size: 10px; }
-      .closing { margin-top: 11px; font-size: 13px; }
-      .footer-status { margin-top: 9px; font-size: 9px; }
-    }
-    @media (prefers-reduced-motion: reduce) { .signal { animation: none; opacity: .48; } }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#cdd3d7" />
+<meta name="description" content="Dream Unity — September 6." />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<title>Dream Unity — September 6</title>
+<style>
+:root{
+  color-scheme:light;
+  --ink:#182027;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;background:#c7ced2}
+body{
+  min-height:100dvh;
+  overflow:hidden;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+.scene,.sky,.clouds,.ground,.veil,.vignette,.grain,.forms{position:fixed;inset:0;pointer-events:none}
+.scene{
+  z-index:0;
+  background:
+    radial-gradient(ellipse at 50% 67%, rgba(255,248,233,.95) 0 6%, rgba(246,244,236,.65) 13%, transparent 29%),
+    radial-gradient(ellipse at 50% 34%, rgba(246,249,250,.72) 0 18%, transparent 50%),
+    linear-gradient(180deg,#8d9aa3 0%,#aab5bc 22%,#c8d0d4 48%,#d7dcde 68%,#c5cccf 100%);
+}
+.sky{
+  z-index:1;
+  opacity:.95;
+  background:
+    radial-gradient(ellipse at 15% 18%,rgba(255,255,255,.56),transparent 30%),
+    radial-gradient(ellipse at 82% 19%,rgba(229,234,237,.48),transparent 30%),
+    radial-gradient(ellipse at 52% 10%,rgba(79,93,103,.20),transparent 42%),
+    linear-gradient(90deg,rgba(36,49,58,.10),transparent 20% 80%,rgba(31,42,51,.12));
+}
+.clouds{
+  z-index:2;
+  inset:-12% -8% 20%;
+  filter:blur(34px);
+  opacity:.72;
+  background:
+    radial-gradient(ellipse at 10% 58%,rgba(247,249,249,.84) 0 13%,transparent 33%),
+    radial-gradient(ellipse at 30% 66%,rgba(245,247,247,.72) 0 12%,transparent 32%),
+    radial-gradient(ellipse at 60% 54%,rgba(241,244,245,.70) 0 15%,transparent 38%),
+    radial-gradient(ellipse at 90% 64%,rgba(246,248,248,.84) 0 14%,transparent 34%),
+    radial-gradient(ellipse at 44% 25%,rgba(81,93,102,.20) 0 15%,transparent 36%);
+  animation:drift 22s ease-in-out infinite alternate;
+}
+.ground{
+  z-index:2;
+  top:auto;
+  height:34vh;
+  background:
+    linear-gradient(180deg,rgba(223,227,228,.15),rgba(222,225,225,.75) 34%,rgba(205,210,211,.95) 100%),
+    repeating-linear-gradient(0deg,rgba(65,74,80,.035) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(90deg,rgba(65,74,80,.028) 0 1px,transparent 1px 34px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+}
+.ground:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-20%;
+  width:44vw;
+  height:24vh;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse,rgba(255,246,220,.58),transparent 67%);
+  filter:blur(22px)
+}
+.forms{z-index:3}
+.form{
+  position:absolute;
+  bottom:26vh;
+  width:clamp(32px,4vw,72px);
+  height:clamp(210px,38vh,430px);
+  border-radius:52% 48% 50% 50%/46% 44% 56% 54%;
+  background:linear-gradient(90deg,rgba(54,65,73,.92),rgba(83,94,101,.78) 46%,rgba(39,49,57,.92));
+  box-shadow:inset 9px 0 13px rgba(255,255,255,.11),18px 20px 35px rgba(26,35,42,.17);
+  filter:saturate(.65);
+  opacity:.88
+}
+.form.a{left:10vw;transform:rotate(-2deg) scale(.96)}
+.form.b{left:27vw;height:clamp(130px,24vh,260px);bottom:31vh;opacity:.57;transform:rotate(2deg)}
+.form.c{right:12vw;height:clamp(170px,31vh,340px);bottom:29vh;opacity:.70;transform:rotate(1deg)}
+.form:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-15px;
+  width:110%;
+  height:32px;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse,rgba(49,60,68,.30),transparent 65%);
+  filter:blur(8px)
+}
+.veil{z-index:4;background:linear-gradient(180deg,rgba(236,240,242,.10),rgba(241,244,244,.36) 58%,rgba(236,239,239,.12));mix-blend-mode:screen}
+.vignette{z-index:7;box-shadow:inset 0 0 18vw 3vw rgba(35,45,52,.30);background:linear-gradient(180deg,rgba(25,35,42,.10),transparent 22%,transparent 80%,rgba(50,58,64,.05))}
+.grain{z-index:8;opacity:.045;mix-blend-mode:multiply;background-image:repeating-radial-gradient(circle at 30% 30%,rgba(24,30,34,.8) 0 .35px,transparent .45px 3px);background-size:7px 7px}
+main{
+  position:relative;
+  z-index:6;
+  min-height:100dvh;
+  display:grid;
+  grid-template-rows:1fr auto;
+  align-items:center;
+  padding:max(30px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) max(26px,env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left))
+}
+.center{
+  width:min(900px,92vw);
+  margin:auto;
+  text-align:center;
+  transform:translateY(-5vh)
+}
+.caption{
+  margin:0 auto 28px;
+  max-width:850px;
+  font-size:clamp(17px,1.55vw,23px);
+  line-height:1.45;
+  letter-spacing:.08em;
+  font-weight:300;
+  color:rgba(21,29,35,.76);
+  text-shadow:0 1px 12px rgba(255,255,255,.25)
+}
+.counter{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  align-items:end;
+  width:min(760px,90vw);
+  margin:0 auto
+}
+.unit{position:relative;padding:0 14px}
+.unit+.unit:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:18%;
+  bottom:19%;
+  width:1px;
+  background:linear-gradient(180deg,transparent,rgba(27,35,40,.24),transparent)
+}
+.value{
+  display:block;
+  font-size:clamp(52px,6vw,78px);
+  line-height:.92;
+  font-weight:300;
+  letter-spacing:.03em;
+  font-variant-numeric:tabular-nums lining-nums;
+  color:rgba(18,24,29,.86);
+  text-shadow:0 1px 12px rgba(255,255,255,.28)
+}
+.label{
+  display:block;
+  margin-top:15px;
+  font-size:clamp(10px,.82vw,12px);
+  line-height:1;
+  letter-spacing:.36em;
+  text-transform:uppercase;
+  color:rgba(26,34,39,.52);
+  font-weight:400
+}
+.brand{
+  align-self:end;
+  margin:0 0 max(6px,env(safe-area-inset-bottom));
+  text-align:center;
+  font-size:clamp(28px,4.2vw,54px);
+  line-height:1;
+  letter-spacing:.62em;
+  text-indent:.62em;
+  text-transform:uppercase;
+  font-weight:300;
+  color:rgba(24,29,33,.83);
+  text-shadow:0 1px 14px rgba(255,255,255,.26)
+}
+@keyframes drift{
+  from{transform:translate3d(-1.5%,0,0) scale(1.03)}
+  to{transform:translate3d(1.5%,-1%,0) scale(1.07)}
+}
+@media(max-width:700px){
+  .center{transform:translateY(-2vh)}
+  .caption{font-size:clamp(15px,4.2vw,18px);line-height:1.5;letter-spacing:.055em;margin-bottom:24px;max-width:88vw}
+  .counter{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 0;width:min(430px,88vw)}
+  .unit:nth-child(3):before{display:none}
+  .unit:nth-child(-n+2):after{content:"";position:absolute;left:18%;right:18%;bottom:-9px;height:1px;background:linear-gradient(90deg,transparent,rgba(26,34,39,.16),transparent)}
+  .value{font-size:clamp(48px,15vw,66px)}
+  .label{font-size:10px;letter-spacing:.27em;margin-top:9px}
+  .brand{font-size:clamp(24px,8vw,38px);letter-spacing:.34em;text-indent:.34em}
+  .form.a{left:4vw;opacity:.58}
+  .form.b{display:none}
+  .form.c{right:4vw;opacity:.48}
+}
+@media(prefers-reduced-motion:reduce){.clouds{animation:none}}
+</style>
 </head>
 <body>
-  <div class="backdrop" aria-hidden="true"></div>
-  <div class="globe" aria-hidden="true"></div>
-  <div class="signal" aria-hidden="true"></div>
-  <div class="grid" aria-hidden="true"></div>
-  <div class="scanlines" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-  <div class="frame" aria-hidden="true"></div>
-  <main>
-    <section class="shell" aria-label="Dream Unity September 6 release transmission">
-      <div class="brand">Dream Unity</div>
-      <p class="kicker">September 6 · The threshold has been crossed</p>
-      <h1>The countdown has become history</h1>
-      <div class="red-rule" aria-hidden="true"></div>
-      <p class="intro">
-        Welcome to the release countdown for Dream Unity. September 6 has begun.
-        <strong>Where the dream ends, the paradigm shift begins.</strong>
-      </p>
-      <p class="definition">
-        <b>POINT ZERO</b> = 00:00:00 at the start of September 6 in the reference timezone.
-        The clock below now <b>counts upward</b>, showing exactly how much time has passed since that moment.
-      </p>
-      <section class="timer-section" aria-label="Elapsed time since Point Zero">
-        <div class="timer-label">Elapsed since Point Zero · Counting up</div>
-        <div class="counter-panel" role="timer" aria-live="off" aria-label="Elapsed time since Point Zero">
-          <div class="counter" aria-hidden="true">
-            <div class="unit"><span class="value" id="days">00</span><span class="unit-label">Days</span></div>
-            <div class="unit"><span class="value" id="hours">00</span><span class="unit-label">Hours</span></div>
-            <div class="unit"><span class="value" id="minutes">00</span><span class="unit-label">Minutes</span></div>
-            <div class="unit"><span class="value" id="seconds">00</span><span class="unit-label">Seconds</span></div>
-          </div>
-        </div>
-        <div class="time-strip" aria-label="Reference time details">
-          <p class="time-now" id="referenceNow">Reference time now · --</p>
-          <p class="zero-row">Point Zero · 06 Sep 2026 · 00:00:00 · Count-up start</p>
-        </div>
-      </section>
-      <p class="closing">
-        <strong>We are inside release day now.</strong> Stay tuned — the first stage of Dream Unity is coming soon.
-      </p>
-      <div class="footer-status">Transmission active · Stage one incoming</div>
-    </section>
-  </main>
-  <script>
-  (() => {
-    'use strict';
-    const POINT_ZERO = Date.parse('2026-09-05T21:00:00.000Z');
-    const SECOND = 1000;
-    const MINUTE = 60 * SECOND;
-    const HOUR = 60 * MINUTE;
-    const DAY = 24 * HOUR;
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-    const referenceNowEl = document.getElementById('referenceNow');
-    const timer = document.querySelector('[role="timer"]');
-    const referenceClock = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Asia/Jerusalem',
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-    });
-    const two = value => String(value).padStart(2, '0');
-    function render() {
-      const now = Date.now();
-      const elapsed = Math.max(0, now - POINT_ZERO);
-      const days = Math.floor(elapsed / DAY);
-      const hours = Math.floor((elapsed % DAY) / HOUR);
-      const minutes = Math.floor((elapsed % HOUR) / MINUTE);
-      const seconds = Math.floor((elapsed % MINUTE) / SECOND);
-      daysEl.textContent = two(days);
-      hoursEl.textContent = two(hours);
-      minutesEl.textContent = two(minutes);
-      secondsEl.textContent = two(seconds);
-      const parts = Object.fromEntries(
-        referenceClock.formatToParts(new Date(now))
-          .filter(part => part.type !== 'literal')
-          .map(part => [part.type, String(part.value).toUpperCase()])
-      );
-      referenceNowEl.textContent = `REFERENCE TIME NOW · ${parts.day} ${parts.month} ${parts.year} · ${parts.hour}:${parts.minute}:${parts.second} · Israel, IDT UTC+3 DST`;
-      timer.setAttribute('aria-label', `Elapsed since Point Zero: ${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds. Counting upward.`);
-      const delay = Math.max(50, SECOND - (Date.now() % SECOND) + 10);
-      window.setTimeout(render, delay);
-    }
-    render();
-  })();
-  </script>
+<div class="scene" aria-hidden="true"></div>
+<div class="sky" aria-hidden="true"></div>
+<div class="clouds" aria-hidden="true"></div>
+<div class="ground" aria-hidden="true"></div>
+<div class="forms" aria-hidden="true"><i class="form a"></i><i class="form b"></i><i class="form c"></i></div>
+<div class="veil" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<main>
+  <section class="center" aria-label="Time since September 6 began">
+    <p class="caption">Time since we entered September 6 — Israel, IDT UTC+3 DST</p>
+    <div class="counter" role="timer" aria-live="off">
+      <div class="unit"><span id="days" class="value">00</span><span class="label">Days</span></div>
+      <div class="unit"><span id="hours" class="value">00</span><span class="label">Hours</span></div>
+      <div class="unit"><span id="minutes" class="value">00</span><span class="label">Minutes</span></div>
+      <div class="unit"><span id="seconds" class="value">00</span><span class="label">Seconds</span></div>
+    </div>
+  </section>
+  <div class="brand">Dream Unity</div>
+</main>
+<script>
+(() => {
+  'use strict';
+  const START = Date.parse('2026-09-05T21:00:00.000Z');
+  const second = 1000;
+  const minute = 60 * second;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const els = {
+    days: document.getElementById('days'),
+    hours: document.getElementById('hours'),
+    minutes: document.getElementById('minutes'),
+    seconds: document.getElementById('seconds'),
+    timer: document.querySelector('[role="timer"]')
+  };
+  const pad = n => String(n).padStart(2,'0');
+  function tick(){
+    const elapsed = Math.max(0, Date.now() - START);
+    const d = Math.floor(elapsed / day);
+    const h = Math.floor((elapsed % day) / hour);
+    const m = Math.floor((elapsed % hour) / minute);
+    const s = Math.floor((elapsed % minute) / second);
+    els.days.textContent = pad(d);
+    els.hours.textContent = pad(h);
+    els.minutes.textContent = pad(m);
+    els.seconds.textContent = pad(s);
+    els.timer.setAttribute('aria-label', `${d} days, ${h} hours, ${m} minutes and ${s} seconds since September 6 began`);
+    setTimeout(tick, Math.max(40, second - (Date.now() % second) + 8));
+  }
+  tick();
+})();
+</script>
 </body>
 </html>
