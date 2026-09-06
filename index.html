@@ -2,253 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#cdd3d7" />
-<meta name="description" content="Dream Unity — September 6." />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#9ca8ae" />
 <title>Dream Unity — September 6</title>
 <style>
-:root{
-  color-scheme:light;
-  --ink:#182027;
-}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;background:#c7ced2}
-body{
-  min-height:100dvh;
-  overflow:hidden;
-  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-  color:var(--ink);
-  -webkit-font-smoothing:antialiased;
-  text-rendering:geometricPrecision;
-}
-.scene,.sky,.clouds,.ground,.veil,.vignette,.grain,.forms{position:fixed;inset:0;pointer-events:none}
-.scene{
-  z-index:0;
-  background:
-    radial-gradient(ellipse at 50% 67%, rgba(255,248,233,.95) 0 6%, rgba(246,244,236,.65) 13%, transparent 29%),
-    radial-gradient(ellipse at 50% 34%, rgba(246,249,250,.72) 0 18%, transparent 50%),
-    linear-gradient(180deg,#8d9aa3 0%,#aab5bc 22%,#c8d0d4 48%,#d7dcde 68%,#c5cccf 100%);
-}
-.sky{
-  z-index:1;
-  opacity:.95;
-  background:
-    radial-gradient(ellipse at 15% 18%,rgba(255,255,255,.56),transparent 30%),
-    radial-gradient(ellipse at 82% 19%,rgba(229,234,237,.48),transparent 30%),
-    radial-gradient(ellipse at 52% 10%,rgba(79,93,103,.20),transparent 42%),
-    linear-gradient(90deg,rgba(36,49,58,.10),transparent 20% 80%,rgba(31,42,51,.12));
-}
-.clouds{
-  z-index:2;
-  inset:-12% -8% 20%;
-  filter:blur(34px);
-  opacity:.72;
-  background:
-    radial-gradient(ellipse at 10% 58%,rgba(247,249,249,.84) 0 13%,transparent 33%),
-    radial-gradient(ellipse at 30% 66%,rgba(245,247,247,.72) 0 12%,transparent 32%),
-    radial-gradient(ellipse at 60% 54%,rgba(241,244,245,.70) 0 15%,transparent 38%),
-    radial-gradient(ellipse at 90% 64%,rgba(246,248,248,.84) 0 14%,transparent 34%),
-    radial-gradient(ellipse at 44% 25%,rgba(81,93,102,.20) 0 15%,transparent 36%);
-  animation:drift 22s ease-in-out infinite alternate;
-}
-.ground{
-  z-index:2;
-  top:auto;
-  height:34vh;
-  background:
-    linear-gradient(180deg,rgba(223,227,228,.15),rgba(222,225,225,.75) 34%,rgba(205,210,211,.95) 100%),
-    repeating-linear-gradient(0deg,rgba(65,74,80,.035) 0 1px,transparent 1px 34px),
-    repeating-linear-gradient(90deg,rgba(65,74,80,.028) 0 1px,transparent 1px 34px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
-}
-.ground:before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:-20%;
-  width:44vw;
-  height:24vh;
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse,rgba(255,246,220,.58),transparent 67%);
-  filter:blur(22px)
-}
-.forms{z-index:3}
-.form{
-  position:absolute;
-  bottom:26vh;
-  width:clamp(32px,4vw,72px);
-  height:clamp(210px,38vh,430px);
-  border-radius:52% 48% 50% 50%/46% 44% 56% 54%;
-  background:linear-gradient(90deg,rgba(54,65,73,.92),rgba(83,94,101,.78) 46%,rgba(39,49,57,.92));
-  box-shadow:inset 9px 0 13px rgba(255,255,255,.11),18px 20px 35px rgba(26,35,42,.17);
-  filter:saturate(.65);
-  opacity:.88
-}
-.form.a{left:10vw;transform:rotate(-2deg) scale(.96)}
-.form.b{left:27vw;height:clamp(130px,24vh,260px);bottom:31vh;opacity:.57;transform:rotate(2deg)}
-.form.c{right:12vw;height:clamp(170px,31vh,340px);bottom:29vh;opacity:.70;transform:rotate(1deg)}
-.form:after{
-  content:"";
-  position:absolute;
-  left:50%;
-  bottom:-15px;
-  width:110%;
-  height:32px;
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse,rgba(49,60,68,.30),transparent 65%);
-  filter:blur(8px)
-}
-.veil{z-index:4;background:linear-gradient(180deg,rgba(236,240,242,.10),rgba(241,244,244,.36) 58%,rgba(236,239,239,.12));mix-blend-mode:screen}
-.vignette{z-index:7;box-shadow:inset 0 0 18vw 3vw rgba(35,45,52,.30);background:linear-gradient(180deg,rgba(25,35,42,.10),transparent 22%,transparent 80%,rgba(50,58,64,.05))}
-.grain{z-index:8;opacity:.045;mix-blend-mode:multiply;background-image:repeating-radial-gradient(circle at 30% 30%,rgba(24,30,34,.8) 0 .35px,transparent .45px 3px);background-size:7px 7px}
-main{
-  position:relative;
-  z-index:6;
-  min-height:100dvh;
-  display:grid;
-  grid-template-rows:1fr auto;
-  align-items:center;
-  padding:max(30px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) max(26px,env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left))
-}
-.center{
-  width:min(900px,92vw);
-  margin:auto;
-  text-align:center;
-  transform:translateY(-5vh)
-}
-.caption{
-  margin:0 auto 28px;
-  max-width:850px;
-  font-size:clamp(17px,1.55vw,23px);
-  line-height:1.45;
-  letter-spacing:.08em;
-  font-weight:300;
-  color:rgba(21,29,35,.76);
-  text-shadow:0 1px 12px rgba(255,255,255,.25)
-}
-.counter{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  align-items:end;
-  width:min(760px,90vw);
-  margin:0 auto
-}
-.unit{position:relative;padding:0 14px}
-.unit+.unit:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:18%;
-  bottom:19%;
-  width:1px;
-  background:linear-gradient(180deg,transparent,rgba(27,35,40,.24),transparent)
-}
-.value{
-  display:block;
-  font-size:clamp(52px,6vw,78px);
-  line-height:.92;
-  font-weight:300;
-  letter-spacing:.03em;
-  font-variant-numeric:tabular-nums lining-nums;
-  color:rgba(18,24,29,.86);
-  text-shadow:0 1px 12px rgba(255,255,255,.28)
-}
-.label{
-  display:block;
-  margin-top:15px;
-  font-size:clamp(10px,.82vw,12px);
-  line-height:1;
-  letter-spacing:.36em;
-  text-transform:uppercase;
-  color:rgba(26,34,39,.52);
-  font-weight:400
-}
-.brand{
-  align-self:end;
-  margin:0 0 max(6px,env(safe-area-inset-bottom));
-  text-align:center;
-  font-size:clamp(28px,4.2vw,54px);
-  line-height:1;
-  letter-spacing:.62em;
-  text-indent:.62em;
-  text-transform:uppercase;
-  font-weight:300;
-  color:rgba(24,29,33,.83);
-  text-shadow:0 1px 14px rgba(255,255,255,.26)
-}
-@keyframes drift{
-  from{transform:translate3d(-1.5%,0,0) scale(1.03)}
-  to{transform:translate3d(1.5%,-1%,0) scale(1.07)}
-}
-@media(max-width:700px){
-  .center{transform:translateY(-2vh)}
-  .caption{font-size:clamp(15px,4.2vw,18px);line-height:1.5;letter-spacing:.055em;margin-bottom:24px;max-width:88vw}
-  .counter{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 0;width:min(430px,88vw)}
-  .unit:nth-child(3):before{display:none}
-  .unit:nth-child(-n+2):after{content:"";position:absolute;left:18%;right:18%;bottom:-9px;height:1px;background:linear-gradient(90deg,transparent,rgba(26,34,39,.16),transparent)}
-  .value{font-size:clamp(48px,15vw,66px)}
-  .label{font-size:10px;letter-spacing:.27em;margin-top:9px}
-  .brand{font-size:clamp(24px,8vw,38px);letter-spacing:.34em;text-indent:.34em}
-  .form.a{left:4vw;opacity:.58}
-  .form.b{display:none}
-  .form.c{right:4vw;opacity:.48}
-}
-@media(prefers-reduced-motion:reduce){.clouds{animation:none}}
+:root{color-scheme:light;--ink:#1b2329;--muted:rgba(27,35,41,.62);--ember:#8b4f46}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#87959e}
+body{font-family:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.poster{position:fixed;inset:0;overflow:hidden;background:#aeb7bb}
+.world{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vignette,.grain,.mist-top,.mist-bottom,.storm,.ember{position:absolute;inset:0;pointer-events:none}
+.mist-top{background:linear-gradient(180deg,rgba(238,241,242,.16),transparent 38%)}
+.mist-bottom{top:48%;animation:drift 22s ease-in-out infinite alternate;background:
+ radial-gradient(ellipse at 18% 54%,rgba(248,249,247,.78) 0 11%,transparent 32%),
+ radial-gradient(ellipse at 44% 62%,rgba(244,246,244,.88) 0 13%,transparent 34%),
+ radial-gradient(ellipse at 72% 55%,rgba(248,249,247,.79) 0 12%,transparent 32%),
+ radial-gradient(ellipse at 96% 64%,rgba(238,242,241,.84) 0 13%,transparent 34%);
+ filter:blur(18px);opacity:.84;transform:scale(1.08)}
+.grain{opacity:.045;mix-blend-mode:multiply;background-image:
+ radial-gradient(circle at 22% 31%,rgba(14,22,27,.70) 0 .45px,transparent .55px),
+ radial-gradient(circle at 69% 62%,rgba(255,255,255,.95) 0 .45px,transparent .55px);background-size:7px 7px,9px 9px}
+.vignette{box-shadow:inset 0 0 12vw 4vw rgba(36,45,51,.22),inset 0 -9vh 10vh rgba(44,52,56,.08)}
+.storm{background:
+ radial-gradient(ellipse at 18% 7%,rgba(50,63,72,.24),transparent 34%),
+ radial-gradient(ellipse at 78% 9%,rgba(48,62,72,.20),transparent 35%),
+ radial-gradient(ellipse at 52% 0%,rgba(35,48,58,.19),transparent 46%);mix-blend-mode:multiply;opacity:.72}
+.ember{left:74%;top:68.3%;right:auto;bottom:auto;width:36px;height:2px;background:linear-gradient(90deg,transparent,rgba(142,59,49,.66),transparent);box-shadow:0 0 8px rgba(142,59,49,.26);opacity:.34;animation:ember 6s ease-in-out infinite}
+@keyframes drift{from{transform:translate3d(-1.2%,0,0) scale(1.08)}to{transform:translate3d(1.2%,-.5%,0) scale(1.1)}}
+@keyframes ember{0%,100%{opacity:.18;transform:translateX(-8px)}50%{opacity:.48;transform:translateX(8px)}}
+.content{position:absolute;z-index:4;left:50%;top:24%;width:min(970px,88vw);transform:translateX(-50%);text-align:center}
+.caption{margin:0;color:rgba(18,26,32,.76);font-size:clamp(16px,1.45vw,25px);font-weight:300;letter-spacing:.13em;text-shadow:0 1px 0 rgba(255,255,255,.36)}
+.counter{width:min(850px,95%);margin:clamp(25px,3.6vh,38px) auto 0;display:grid;grid-template-columns:repeat(4,1fr)}
+.unit{position:relative;padding:0 clamp(8px,1.5vw,20px)}
+.unit+.unit::before{content:"";position:absolute;left:0;top:10%;bottom:15%;width:1px;background:linear-gradient(180deg,transparent,rgba(25,33,39,.14),transparent)}
+.value{display:block;font-size:clamp(56px,6.4vw,102px);font-weight:200;line-height:.90;letter-spacing:.035em;font-variant-numeric:tabular-nums lining-nums;color:rgba(15,23,29,.93)}
+.label{display:block;margin-top:clamp(13px,1.8vh,20px);font-size:clamp(9px,.68vw,12px);font-weight:500;letter-spacing:.40em;text-transform:uppercase;color:rgba(25,33,39,.50)}
+.brand{position:absolute;z-index:4;left:50%;bottom:7.8%;margin:0;transform:translateX(-50%);font-size:clamp(34px,4.7vw,74px);font-weight:300;letter-spacing:.50em;white-space:nowrap;text-transform:uppercase;color:rgba(14,22,27,.87);text-shadow:0 1px 0 rgba(255,255,255,.28)}
+.brand span{display:inline-block;transform:translateX(.25em)}
+@media(max-width:700px){.content{top:23%;width:95vw}.caption{font-size:clamp(14px,4vw,18px);letter-spacing:.08em}.counter{width:100%;margin-top:25px}.value{font-size:clamp(44px,14vw,70px)}.label{font-size:9px;letter-spacing:.22em}.unit{padding:0 5px}.brand{bottom:8%;font-size:clamp(28px,8vw,44px);letter-spacing:.30em}}
+@media(prefers-reduced-motion:reduce){.ember,.mist-bottom{animation:none}}
 </style>
 </head>
 <body>
-<div class="scene" aria-hidden="true"></div>
-<div class="sky" aria-hidden="true"></div>
-<div class="clouds" aria-hidden="true"></div>
-<div class="ground" aria-hidden="true"></div>
-<div class="forms" aria-hidden="true"><i class="form a"></i><i class="form b"></i><i class="form c"></i></div>
-<div class="veil" aria-hidden="true"></div>
-<div class="vignette" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
-<main>
-  <section class="center" aria-label="Time since September 6 began">
-    <p class="caption">Time since we entered September 6 — Israel, IDT UTC+3 DST</p>
-    <div class="counter" role="timer" aria-live="off">
-      <div class="unit"><span id="days" class="value">00</span><span class="label">Days</span></div>
-      <div class="unit"><span id="hours" class="value">00</span><span class="label">Hours</span></div>
-      <div class="unit"><span id="minutes" class="value">00</span><span class="label">Minutes</span></div>
-      <div class="unit"><span id="seconds" class="value">00</span><span class="label">Seconds</span></div>
-    </div>
-  </section>
-  <div class="brand">Dream Unity</div>
+<div class="poster" aria-hidden="true">
+<svg class="world" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#596a75"/><stop offset=".23" stop-color="#7f9099"/><stop offset=".48" stop-color="#aebbc1"/><stop offset=".70" stop-color="#d0d7d8"/><stop offset="1" stop-color="#b9c1c3"/>
+  </linearGradient>
+  <radialGradient id="dawn" cx="50%" cy="70%" r="45%"><stop offset="0" stop-color="#fff6e5" stop-opacity=".98"/><stop offset=".12" stop-color="#f4e7d0" stop-opacity=".62"/><stop offset=".42" stop-color="#dce1e1" stop-opacity=".18"/><stop offset="1" stop-color="#c1c8ca" stop-opacity="0"/></radialGradient>
+  <linearGradient id="stoneL" x1="0" x2="1"><stop offset="0" stop-color="#d7dee0" stop-opacity=".48"/><stop offset=".28" stop-color="#8d9ca4" stop-opacity=".62"/><stop offset=".56" stop-color="#45555e" stop-opacity=".76"/><stop offset="1" stop-color="#c7d0d3" stop-opacity=".24"/></linearGradient>
+  <linearGradient id="stoneR" x1="1" x2="0"><stop offset="0" stop-color="#dce2e4" stop-opacity=".42"/><stop offset=".28" stop-color="#8b9aa2" stop-opacity=".62"/><stop offset=".56" stop-color="#47575f" stop-opacity=".78"/><stop offset="1" stop-color="#cbd4d6" stop-opacity=".22"/></linearGradient>
+  <filter id="noise" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.028" numOctaves="4" seed="12" result="n"/>
+    <feColorMatrix in="n" values="1 0 0 0 .05  0 1 0 0 .08  0 0 1 0 .1  0 0 0 .28 0" result="nc"/>
+    <feGaussianBlur stdDeviation="6"/>
+  </filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="glow"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="14" result="b"/><feOffset dy="16"/><feColorMatrix values="0 0 0 0 .07 0 0 0 0 .1 0 0 0 0 .12 0 0 0 .25 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <linearGradient id="formFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="white"/><stop offset=".72" stop-color="white"/><stop offset="1" stop-color="black"/></linearGradient>
+  <mask id="formsFade"><rect width="1600" height="900" fill="url(#formFade)"/></mask>
+</defs>
+<rect width="1600" height="900" fill="url(#sky)"/>
+<rect width="1600" height="900" fill="url(#dawn)"/>
+<rect width="1600" height="430" y="0" filter="url(#noise)" opacity=".50" fill="#d9e0e2"/>
+<rect width="1600" height="360" y="0" filter="url(#noise)" opacity=".18" fill="#41545f" style="mix-blend-mode:multiply"/>
+<path d="M0 640 C150 612 248 618 350 636 C445 650 516 618 620 631 C735 647 825 610 940 627 C1050 643 1136 611 1238 624 C1372 642 1468 610 1600 633 L1600 900 L0 900Z" fill="#6b7880" opacity=".20"/>
+<g filter="url(#shadow)" mask="url(#formsFade)">
+  <path d="M104 645 C68 545 78 382 132 220 C158 146 203 105 238 91 C270 169 282 277 263 371 C245 458 290 548 249 650 C209 700 148 697 104 645Z" fill="url(#stoneL)" opacity=".90" stroke="#eef3f4" stroke-opacity=".22" stroke-width="1.5"/>
+  <path d="M185 174 C229 205 244 276 228 351 C214 416 238 478 218 548 C195 598 170 602 153 567 C178 496 157 438 170 361 C184 280 166 223 185 174Z" fill="#d8e0e2" opacity=".16"/>
+  <path d="M1457 621 C1493 509 1490 376 1442 206 C1417 117 1366 73 1328 63 C1290 139 1277 246 1298 347 C1319 445 1269 536 1316 640 C1354 689 1416 681 1457 621Z" fill="url(#stoneR)" opacity=".92" stroke="#eef3f4" stroke-opacity=".20" stroke-width="1.5"/>
+  <path d="M1367 138 C1322 183 1310 270 1328 348 C1345 420 1318 491 1342 557 C1361 599 1390 601 1410 560 C1380 488 1401 422 1388 342 C1375 255 1397 191 1367 138Z" fill="#d8e0e2" opacity=".14"/>
+  <path d="M434 615 C410 526 423 405 466 312 C487 267 511 242 536 230 C557 300 566 376 554 442 C541 506 570 562 543 623 C515 653 466 648 434 615Z" fill="url(#stoneL)" opacity=".48"/>
+  <path d="M1161 608 C1184 516 1174 414 1137 331 C1118 288 1092 266 1069 252 C1048 317 1041 383 1052 445 C1064 511 1039 558 1064 617 C1091 646 1136 642 1161 608Z" fill="url(#stoneR)" opacity=".45"/>
+</g>
+<g opacity=".07" transform="translate(0 1380) scale(1 -1)" filter="url(#soft)" mask="url(#formsFade)">
+  <path d="M104 645 C68 545 78 382 132 220 C158 146 203 105 238 91 C270 169 282 277 263 371 C245 458 290 548 249 650 C209 700 148 697 104 645Z" fill="#667984"/>
+  <path d="M1457 621 C1493 509 1490 376 1442 206 C1417 117 1366 73 1328 63 C1290 139 1277 246 1298 347 C1319 445 1269 536 1316 640 C1354 689 1416 681 1457 621Z" fill="#667984"/>
+</g>
+<path d="M0 570 C245 552 435 565 645 573 C846 581 1057 552 1600 572" fill="none" stroke="#f2f4f2" stroke-opacity=".31" stroke-width="24" filter="url(#soft)"/>
+<path d="M580 696 C670 568 931 567 1021 696" fill="none" stroke="#f4dfc2" stroke-opacity=".52" stroke-width="1.2"/>
+<path d="M632 696 C704 603 897 603 969 696" fill="none" stroke="#fff6e8" stroke-opacity=".31" stroke-width=".8"/>
+<line x1="800" y1="548" x2="800" y2="798" stroke="#fff3dd" stroke-opacity=".68" stroke-width="1" filter="url(#glow)"/>
+<line x1="626" y1="696" x2="974" y2="696" stroke="#fff7e9" stroke-opacity=".44" stroke-width="1" filter="url(#glow)"/>
+<rect x="0" y="690" width="1600" height="210" fill="#c6ced0" opacity=".23"/>
+<path d="M0 720 C260 707 462 708 800 718 C1137 708 1330 707 1600 720" stroke="#eef1ef" stroke-opacity=".42" fill="none"/>
+</svg>
+<div class="storm"></div><div class="mist-top"></div><div class="mist-bottom"></div><div class="ember"></div><div class="grain"></div><div class="vignette"></div>
+</div>
+<main class="content" role="timer" aria-label="Time elapsed since September 6 began">
+<p class="caption">Time since September 6 began — Israel, IDT UTC+3 DST</p>
+<div class="counter" aria-hidden="true">
+<div class="unit"><span class="value" id="days">00</span><span class="label">Days</span></div>
+<div class="unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
+<div class="unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
+<div class="unit"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
+</div>
 </main>
-<script>
-(() => {
-  'use strict';
-  const START = Date.parse('2026-09-05T21:00:00.000Z');
-  const second = 1000;
-  const minute = 60 * second;
-  const hour = 60 * minute;
-  const day = 24 * hour;
-  const els = {
-    days: document.getElementById('days'),
-    hours: document.getElementById('hours'),
-    minutes: document.getElementById('minutes'),
-    seconds: document.getElementById('seconds'),
-    timer: document.querySelector('[role="timer"]')
-  };
-  const pad = n => String(n).padStart(2,'0');
-  function tick(){
-    const elapsed = Math.max(0, Date.now() - START);
-    const d = Math.floor(elapsed / day);
-    const h = Math.floor((elapsed % day) / hour);
-    const m = Math.floor((elapsed % hour) / minute);
-    const s = Math.floor((elapsed % minute) / second);
-    els.days.textContent = pad(d);
-    els.hours.textContent = pad(h);
-    els.minutes.textContent = pad(m);
-    els.seconds.textContent = pad(s);
-    els.timer.setAttribute('aria-label', `${d} days, ${h} hours, ${m} minutes and ${s} seconds since September 6 began`);
-    setTimeout(tick, Math.max(40, second - (Date.now() % second) + 8));
-  }
-  tick();
-})();
-</script>
+<h1 class="brand"><span>Dream Unity</span></h1>
+<script>(()=>{const z=Date.parse('2026-09-05T21:00:00.000Z'),S=1e3,M=60*S,H=60*M,D=24*H,$=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),timer=document.querySelector('[role="timer"]');function tick(){const e=Math.max(0,Date.now()-z),d=Math.floor(e/D),h=Math.floor(e%D/H),m=Math.floor(e%H/M),s=Math.floor(e%M/S);$('days').textContent=pad(d);$('hours').textContent=pad(h);$('minutes').textContent=pad(m);$('seconds').textContent=pad(s);timer.setAttribute('aria-label',`Time elapsed since September 6 began: ${d} days, ${h} hours, ${m} minutes and ${s} seconds`);setTimeout(tick,Math.max(40,S-(Date.now()%S)+8))}tick()})();</script>
 </body>
 </html>
