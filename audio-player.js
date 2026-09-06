@@ -8,18 +8,34 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    .du-music-control{position:fixed;z-index:9999;top:max(18px,env(safe-area-inset-top));right:max(18px,env(safe-area-inset-right));display:flex;align-items:center;gap:9px;padding:9px 12px 9px 10px;border:1px solid rgba(43,70,84,.2);border-radius:999px;background:rgba(244,250,252,.58);color:rgba(31,49,59,.84);font:500 10px/1 "Avenir Next","Helvetica Neue",Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 5px 22px rgba(64,92,108,.09),inset 0 1px 0 rgba(255,255,255,.6);transition:.2s ease}
-    .du-music-control:hover{background:rgba(250,253,254,.75);border-color:rgba(43,70,84,.3);color:rgba(24,42,52,.96)}
+    .poster{filter:brightness(1.045) saturate(.92)}
+    .du-cinematic-lift{position:fixed;z-index:3;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(218,239,249,.12) 0%,rgba(231,245,251,.15) 47%,rgba(248,252,253,.18) 100%),radial-gradient(ellipse at 50% 64%,rgba(255,250,236,.08),transparent 42%);mix-blend-mode:screen}
+    .du-bottom-cluster{position:fixed;z-index:9998;left:50%;bottom:max(28px,calc(env(safe-area-inset-bottom) + 14px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:11px;width:max-content;max-width:94vw;pointer-events:none}
+    .du-bottom-cluster .brand{position:static!important;left:auto!important;bottom:auto!important;transform:none!important;margin:0!important;pointer-events:none}
+    .du-bottom-cluster .brand span{transform:translateX(.25em)!important}
+    .du-music-control{position:static;z-index:9999;display:flex;align-items:center;gap:9px;padding:9px 12px 9px 10px;border:1px solid rgba(56,86,101,.17);border-radius:999px;background:rgba(247,252,254,.62);color:rgba(39,61,72,.82);font:500 10px/1 "Avenir Next","Helvetica Neue",Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;pointer-events:auto;backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);box-shadow:0 5px 22px rgba(70,103,120,.07),inset 0 1px 0 rgba(255,255,255,.72);transition:background .2s ease,border-color .2s ease,color .2s ease,transform .16s ease}
+    .du-music-control:hover{background:rgba(252,254,255,.80);border-color:rgba(49,81,97,.25);color:rgba(29,51,63,.94)}
     .du-music-control:active{transform:scale(.97)}
-    .du-music-control:focus-visible{outline:2px solid rgba(53,89,108,.38);outline-offset:3px}
-    .du-music-icon{position:relative;width:20px;height:20px;display:grid;place-items:center;border:1px solid rgba(42,68,81,.22);border-radius:50%;background:rgba(255,255,255,.28)}
-    .du-music-icon::before{content:"";width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid rgba(31,49,59,.8);margin-left:2px}
-    .du-music-control[data-playing="true"] .du-music-icon::before{width:6px;height:8px;border:0;border-left:2px solid rgba(31,49,59,.8);border-right:2px solid rgba(31,49,59,.8);margin-left:0}
-    .du-music-dot{width:5px;height:5px;border-radius:50%;background:rgba(74,112,132,.38)}
-    .du-music-control[data-playing="true"] .du-music-dot{background:#6c98ad;box-shadow:0 0 0 4px rgba(108,152,173,.12)}
-    @media(max-width:700px){.du-music-control{top:max(11px,env(safe-area-inset-top));right:max(11px,env(safe-area-inset-right));padding:8px 10px;font-size:9px;letter-spacing:.12em}}
+    .du-music-control:focus-visible{outline:2px solid rgba(64,105,125,.32);outline-offset:3px}
+    .du-music-icon{position:relative;width:20px;height:20px;display:grid;place-items:center;border:1px solid rgba(51,80,94,.19);border-radius:50%;background:rgba(255,255,255,.32)}
+    .du-music-icon::before{content:"";width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid rgba(39,61,72,.78);margin-left:2px}
+    .du-music-control[data-playing="true"] .du-music-icon::before{width:6px;height:8px;border:0;border-left:2px solid rgba(39,61,72,.78);border-right:2px solid rgba(39,61,72,.78);margin-left:0}
+    .du-music-dot{width:5px;height:5px;border-radius:50%;background:rgba(91,137,158,.34)}
+    .du-music-control[data-playing="true"] .du-music-dot{background:#78aabd;box-shadow:0 0 0 4px rgba(120,170,189,.12)}
+    @media(max-width:700px){.du-bottom-cluster{bottom:max(14px,calc(env(safe-area-inset-bottom) + 8px));gap:9px}.du-music-control{padding:8px 10px;font-size:9px;letter-spacing:.12em}}
+    @media(max-height:620px){.du-bottom-cluster{bottom:max(10px,env(safe-area-inset-bottom));gap:7px}.du-music-control{padding:7px 10px}}
   `;
   document.head.appendChild(style);
+
+  const theme = document.querySelector('meta[name="theme-color"]');
+  if (theme) theme.setAttribute('content', '#cadfe9');
+  document.documentElement.style.background = '#cadfe9';
+  document.body.style.background = '#cadfe9';
+
+  const lift = document.createElement('div');
+  lift.className = 'du-cinematic-lift';
+  lift.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(lift);
 
   const audio = document.createElement('audio');
   audio.id = 'dreamUnitySoundtrack';
@@ -38,7 +54,13 @@
   button.setAttribute('aria-pressed', 'false');
   button.setAttribute('aria-label', 'Play Dream Unity music');
   button.innerHTML = '<span class="du-music-icon" aria-hidden="true"></span><span class="du-music-label">Play Music</span><span class="du-music-dot" aria-hidden="true"></span>';
-  document.body.appendChild(button);
+
+  const cluster = document.createElement('div');
+  cluster.className = 'du-bottom-cluster';
+  const brand = document.querySelector('.brand');
+  document.body.appendChild(cluster);
+  if (brand) cluster.appendChild(brand);
+  cluster.appendChild(button);
 
   const label = button.querySelector('.du-music-label');
   let sourceIndex = 0;
