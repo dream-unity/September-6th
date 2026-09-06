@@ -3,91 +3,596 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#ffffff" />
-  <meta name="description" content="Dream Unity front-page 3D visualization." />
+  <meta name="theme-color" content="#050308" />
+  <meta name="description" content="Dream Unity — September 6. Point Zero has arrived." />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Dream Unity</title>
-  <link rel="stylesheet" href="./styles.css?v=20260905-utc10-2" />
-</head>
-<body>
-  <main id="app" aria-label="Dream Unity front-page 3D visualization">
-    <canvas id="world" aria-label="Interactive Dream Unity 3D field"></canvas>
-    <div class="brand"><i></i><span>DREAM UNITY</span></div>
-    <div class="live"><i></i><span>LIVE</span></div>
-
-    <div class="unlock-countdown" id="unlockCountdown" role="timer" aria-live="off" aria-label="Countdown until September 6, 2026 at midnight in UTC minus 10">
-      <span>UNLOCKED IN</span>
-      <strong id="countdownValue">--D&nbsp;&nbsp;--:--:--</strong>
-      <small>UTC−10 · 6 SEP</small>
-    </div>
-
-    <div class="world-label" id="label-machine" data-world="machine" aria-hidden="true">
-      <span>01</span><strong>DREAM MACHINE</strong>
-    </div>
-    <div class="world-label" id="label-maker" data-world="maker" aria-hidden="true">
-      <span>02</span><strong>DREAM MAKER</strong>
-    </div>
-    <div class="world-label" id="label-reality" data-world="reality" aria-hidden="true">
-      <span>03</span><strong>DREAM WORLD</strong>
-    </div>
-
-    <div class="unity-label" id="unityLabel" aria-hidden="true"><span></span><b>UNITY</b></div>
-    <div class="hint" id="hint">DRAG TO ORBIT · PINCH TO ZOOM</div>
-    <div class="loading" id="loading" aria-hidden="true"><span></span></div>
-  </main>
-
-  <noscript>This experience requires JavaScript.</noscript>
-  <script src="./light-theme.js?v=20260905-utc10-2"></script>
-  <script src="./visual-loader.js?v=20260905-utc10-2"></script>
-  <script>
-  (() => {
-    'use strict';
-
-    const root = document.getElementById('unlockCountdown');
-    const value = document.getElementById('countdownValue');
-    if (!root || !value) return;
-
-    // Midnight at the start of 6 September 2026 in UTC−10.
-    // 2026-09-06 00:00:00 UTC−10 = 2026-09-06 10:00:00 UTC.
-    const unlockAt = Date.parse('2026-09-06T10:00:00.000Z');
-    const SECOND = 1000;
-    const MINUTE = 60 * SECOND;
-    const HOUR = 60 * MINUTE;
-    const DAY = 24 * HOUR;
-    let timer = 0;
-
-    const two = number => String(number).padStart(2, '0');
-
-    function render() {
-      const remaining = Math.max(0, unlockAt - Date.now());
-
-      if (remaining <= 0) {
-        value.textContent = 'UNLOCKED';
-        root.classList.add('unlocked');
-        root.setAttribute('aria-label', 'Unlocked');
-        if (timer) clearTimeout(timer);
-        return;
-      }
-
-      const days = Math.floor(remaining / DAY);
-      const hours = Math.floor((remaining % DAY) / HOUR);
-      const minutes = Math.floor((remaining % HOUR) / MINUTE);
-      const seconds = Math.floor((remaining % MINUTE) / SECOND);
-
-      value.textContent = `${two(days)}D  ${two(hours)}:${two(minutes)}:${two(seconds)}`;
-      root.setAttribute(
-        'aria-label',
-        `Unlocked in ${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`
-      );
-
-      const delay = Math.max(50, SECOND - (Date.now() % SECOND) + 12);
-      timer = window.setTimeout(render, delay);
+  <title>Dream Unity — Point Zero</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8f6ff;
+      --muted: rgba(239, 233, 255, .62);
+      --faint: rgba(239, 233, 255, .34);
+      --violet: #b08cff;
+      --violet-bright: #d7c5ff;
+      --blue: #7ab8ff;
+      --gold: #ffe3a1;
+      --bg: #050308;
     }
 
-    render();
-  })();
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    #stars,
+    .sky,
+    .aurora,
+    .horizon,
+    .vignette,
+    .grain,
+    .frame {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #stars { z-index: 0; width: 100%; height: 100%; }
+
+    .sky {
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 50% 66%, rgba(150, 98, 255, .18) 0%, rgba(89, 43, 183, .09) 20%, transparent 51%),
+        radial-gradient(circle at 18% 18%, rgba(77, 121, 255, .10), transparent 31%),
+        radial-gradient(circle at 84% 24%, rgba(181, 87, 255, .09), transparent 33%),
+        linear-gradient(180deg, #040207 0%, #07030c 47%, #08030d 63%, #020104 100%);
+    }
+
+    .aurora {
+      z-index: 2;
+      opacity: .75;
+      background:
+        conic-gradient(from 245deg at 50% 78%, transparent 0 13%, rgba(116, 79, 255, .08) 16%, transparent 19% 28%, rgba(90, 151, 255, .055) 31%, transparent 34% 45%, rgba(187, 104, 255, .06) 48%, transparent 51% 100%);
+      filter: blur(7px);
+      transform: scale(1.15);
+      animation: aurora-breathe 9s ease-in-out infinite alternate;
+    }
+
+    .horizon {
+      z-index: 3;
+      top: auto;
+      height: 43vh;
+      background:
+        linear-gradient(180deg, transparent 0%, rgba(75, 39, 112, .07) 40%, rgba(28, 11, 41, .42) 75%, rgba(0, 0, 0, .84) 100%);
+      overflow: hidden;
+    }
+
+    .horizon::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 4%;
+      width: min(74vw, 1080px);
+      height: 2px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(157, 110, 255, .35) 18%, rgba(255, 240, 209, .96) 50%, rgba(157, 110, 255, .35) 82%, transparent);
+      box-shadow:
+        0 0 9px rgba(255, 232, 190, .86),
+        0 0 32px rgba(180, 123, 255, .70),
+        0 0 95px rgba(112, 80, 255, .47),
+        0 0 190px rgba(141, 78, 255, .30);
+      animation: horizon-pulse 4.8s ease-in-out infinite;
+    }
+
+    .horizon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -10%;
+      width: min(50vw, 760px);
+      aspect-ratio: 1;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 247, 223, .18) 0 1%, rgba(198, 163, 255, .10) 7%, rgba(118, 74, 255, .07) 18%, transparent 56%);
+      filter: blur(1px);
+      animation: core-breathe 5.2s ease-in-out infinite alternate;
+    }
+
+    .vignette {
+      z-index: 8;
+      box-shadow: inset 0 0 15vw 5vw rgba(0, 0, 0, .78);
+      background: linear-gradient(180deg, rgba(0, 0, 0, .20), transparent 16%, transparent 75%, rgba(0, 0, 0, .38));
+    }
+
+    .grain {
+      z-index: 9;
+      opacity: .09;
+      mix-blend-mode: soft-light;
+      background-image:
+        repeating-radial-gradient(circle at 17% 23%, rgba(255,255,255,.35) 0 .55px, transparent .65px 3px),
+        repeating-radial-gradient(circle at 73% 61%, rgba(255,255,255,.25) 0 .5px, transparent .65px 4px);
+      background-size: 8px 8px, 11px 11px;
+      animation: grain 270ms steps(2) infinite;
+    }
+
+    .frame {
+      z-index: 12;
+      border: 1px solid rgba(255, 255, 255, .055);
+      margin: clamp(8px, 1.3vw, 18px);
+    }
+
+    .frame::before,
+    .frame::after {
+      content: "";
+      position: absolute;
+      top: 22px;
+      width: 38px;
+      height: 1px;
+      background: rgba(255,255,255,.19);
+    }
+
+    .frame::before { left: 22px; }
+    .frame::after { right: 22px; }
+
+    main {
+      position: relative;
+      z-index: 6;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: max(32px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(34px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+      isolation: isolate;
+    }
+
+    .experience {
+      width: min(1180px, 94vw);
+      text-align: center;
+      transform: translateY(-1vh);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: clamp(25px, 4.5vh, 54px);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .38em;
+      color: rgba(244, 240, 255, .72);
+      text-transform: uppercase;
+    }
+
+    .brand::before,
+    .brand::after {
+      content: "";
+      width: clamp(25px, 4vw, 58px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(216, 197, 255, .42));
+    }
+
+    .brand::after { transform: scaleX(-1); }
+
+    .kicker {
+      margin: 0 0 12px;
+      font-size: clamp(10px, 1vw, 13px);
+      line-height: 1;
+      letter-spacing: .42em;
+      text-transform: uppercase;
+      color: rgba(207, 192, 255, .60);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      font-size: clamp(45px, 7.7vw, 112px);
+      line-height: .92;
+      letter-spacing: -.046em;
+      text-wrap: balance;
+      text-shadow: 0 0 36px rgba(164, 118, 255, .16);
+    }
+
+    h1 em {
+      display: block;
+      margin-top: .08em;
+      font-style: italic;
+      color: transparent;
+      background: linear-gradient(90deg, #ffffff 15%, #e8dcff 46%, #fff0ca 55%, #d3bcff 82%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .thesis {
+      width: min(790px, 91vw);
+      margin: clamp(20px, 3.5vh, 38px) auto 0;
+      font-size: clamp(15px, 1.45vw, 20px);
+      line-height: 1.72;
+      font-weight: 350;
+      letter-spacing: .018em;
+      color: rgba(241, 237, 250, .70);
+      text-wrap: balance;
+    }
+
+    .thesis strong {
+      color: rgba(255,255,255,.96);
+      font-weight: 500;
+    }
+
+    .counter-wrap {
+      position: relative;
+      width: min(1060px, 94vw);
+      margin: clamp(30px, 5vh, 58px) auto clamp(22px, 3.7vh, 39px);
+      padding: clamp(18px, 2.7vw, 31px) clamp(5px, 1vw, 14px) clamp(15px, 2.4vw, 27px);
+    }
+
+    .counter-wrap::before,
+    .counter-wrap::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 100%;
+      height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(218, 198, 255, .22) 14%, rgba(255, 241, 212, .52) 50%, rgba(218, 198, 255, .22) 86%, transparent);
+    }
+
+    .counter-wrap::before { top: 0; }
+    .counter-wrap::after { bottom: 0; opacity: .55; }
+
+    .counter-caption {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: clamp(14px, 2.2vh, 23px);
+      color: rgba(229, 220, 246, .50);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .31em;
+      text-transform: uppercase;
+    }
+
+    .counter-caption::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 7px rgba(255, 226, 157, .95), 0 0 18px rgba(176, 133, 255, .60);
+      animation: marker-pulse 1.6s ease-in-out infinite;
+    }
+
+    .counter {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: end;
+    }
+
+    .unit {
+      position: relative;
+      min-width: 0;
+      padding: 0 clamp(2px, 1.15vw, 16px);
+    }
+
+    .unit + .unit::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10%;
+      bottom: 8%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(223, 208, 255, .22), transparent);
+    }
+
+    .number {
+      display: block;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: clamp(37px, 7.2vw, 96px);
+      line-height: .92;
+      font-weight: 300;
+      font-variant-numeric: tabular-nums lining-nums;
+      letter-spacing: -.065em;
+      color: #fff;
+      text-shadow: 0 0 26px rgba(204, 181, 255, .18);
+    }
+
+    .label {
+      display: block;
+      margin-top: clamp(9px, 1.5vh, 15px);
+      font-size: clamp(7px, .7vw, 9px);
+      font-weight: 700;
+      letter-spacing: .30em;
+      text-transform: uppercase;
+      color: rgba(224, 216, 242, .44);
+    }
+
+    .israel-now {
+      margin: 0;
+      color: rgba(230, 221, 246, .48);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: clamp(9px, .75vw, 11px);
+      line-height: 1.5;
+      letter-spacing: .12em;
+      font-variant-numeric: tabular-nums;
+      text-transform: uppercase;
+    }
+
+    .point-zero {
+      margin: 7px 0 0;
+      color: rgba(230, 221, 246, .28);
+      font-size: clamp(8px, .65vw, 10px);
+      letter-spacing: .17em;
+      text-transform: uppercase;
+    }
+
+    .closing {
+      width: min(720px, 90vw);
+      margin: 0 auto;
+      font-size: clamp(13px, 1.16vw, 16px);
+      line-height: 1.7;
+      color: rgba(241, 237, 250, .61);
+      text-wrap: balance;
+    }
+
+    .closing strong {
+      display: block;
+      margin-bottom: 5px;
+      color: rgba(255,255,255,.94);
+      font-weight: 500;
+    }
+
+    .status {
+      position: fixed;
+      left: 50%;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 10;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      color: rgba(229, 220, 246, .27);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+
+    @keyframes aurora-breathe {
+      from { opacity: .48; transform: scale(1.1) rotate(-1deg); }
+      to { opacity: .84; transform: scale(1.19) rotate(1deg); }
+    }
+
+    @keyframes horizon-pulse {
+      0%, 100% { opacity: .65; transform: translateX(-50%) scaleX(.91); }
+      50% { opacity: 1; transform: translateX(-50%) scaleX(1.035); }
+    }
+
+    @keyframes core-breathe {
+      from { opacity: .62; transform: translateX(-50%) scale(.93); }
+      to { opacity: 1; transform: translateX(-50%) scale(1.06); }
+    }
+
+    @keyframes marker-pulse {
+      0%, 100% { opacity: .45; transform: scale(.8); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    @keyframes grain {
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-1%,1%); }
+      50% { transform: translate(1%,-1%); }
+      75% { transform: translate(1%,1%); }
+      100% { transform: translate(-1%,-1%); }
+    }
+
+    @media (max-height: 720px) {
+      .brand { margin-bottom: 22px; }
+      .thesis { margin-top: 16px; line-height: 1.5; }
+      .counter-wrap { margin-top: 23px; margin-bottom: 18px; padding-top: 15px; padding-bottom: 13px; }
+      .counter-caption { margin-bottom: 13px; }
+      .label { margin-top: 7px; }
+      .closing { line-height: 1.5; }
+    }
+
+    @media (max-width: 560px) {
+      .experience { width: 96vw; }
+      .brand { letter-spacing: .28em; gap: 7px; }
+      .brand::before,
+      .brand::after { width: 20px; }
+      .kicker { letter-spacing: .30em; }
+      h1 { font-size: clamp(44px, 15vw, 70px); }
+      .thesis { font-size: 14px; line-height: 1.55; }
+      .counter-wrap { width: 96vw; padding-left: 0; padding-right: 0; }
+      .counter-caption { letter-spacing: .23em; }
+      .number { font-size: clamp(35px, 12vw, 54px); }
+      .label { font-size: 6px; letter-spacing: .16em; }
+      .israel-now { letter-spacing: .06em; }
+      .point-zero { letter-spacing: .09em; }
+      .status { font-size: 7px; letter-spacing: .20em; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .aurora,
+      .horizon::before,
+      .horizon::after,
+      .grain,
+      .counter-caption::before { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="sky"></div>
+  <div class="aurora"></div>
+  <div class="horizon"></div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+  <div class="frame"></div>
+
+  <main>
+    <section class="experience" aria-labelledby="title">
+      <div class="brand">Dream Unity</div>
+      <p class="kicker">September 6 · The threshold has been crossed</p>
+      <h1 id="title">Point Zero <em>has arrived.</em></h1>
+
+      <p class="thesis">
+        September 6 is here. <strong>The countdown has become history.</strong><br />
+        Where the dream ends, the paradigm shift begins — through Dream Unity.
+      </p>
+
+      <div class="counter-wrap" role="timer" aria-label="Time elapsed since Point Zero in Israel">
+        <div class="counter-caption">Time since Point Zero</div>
+        <div class="counter" aria-hidden="true">
+          <div class="unit"><span class="number" id="days">00</span><span class="label">Days</span></div>
+          <div class="unit"><span class="number" id="hours">00</span><span class="label">Hours</span></div>
+          <div class="unit"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
+          <div class="unit"><span class="number" id="seconds">00</span><span class="label">Seconds</span></div>
+        </div>
+      </div>
+
+      <p class="israel-now" id="israelNow">Israel now · --</p>
+      <p class="point-zero">Point Zero · 06 Sep 2026 · 00:00:00 · Israel / Asia–Jerusalem</p>
+
+      <p class="closing">
+        <strong>What began as a dream is becoming a world.</strong>
+        The first stage of Dream Unity is now entering completion. Stay close. The first release is coming soon.
+      </p>
+    </section>
+  </main>
+
+  <div class="status">Dream Unity · Point Zero · Transmission Active</div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // Point Zero is midnight at the start of 6 September 2026 in Israel.
+      // Israel is on IDT (UTC+03:00) on this date, so Point Zero is 2026-09-05T21:00:00Z.
+      const POINT_ZERO = Date.parse('2026-09-05T21:00:00.000Z');
+      const SECOND = 1000;
+      const MINUTE = 60 * SECOND;
+      const HOUR = 60 * MINUTE;
+      const DAY = 24 * HOUR;
+
+      const daysEl = document.getElementById('days');
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      const secondsEl = document.getElementById('seconds');
+      const israelNowEl = document.getElementById('israelNow');
+      const timerRegion = document.querySelector('[role="timer"]');
+
+      const israelClock = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Jerusalem',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+
+      const two = value => String(value).padStart(2, '0');
+
+      function updateClock() {
+        const now = Date.now();
+        const elapsed = Math.max(0, now - POINT_ZERO);
+        const days = Math.floor(elapsed / DAY);
+        const hours = Math.floor((elapsed % DAY) / HOUR);
+        const minutes = Math.floor((elapsed % HOUR) / MINUTE);
+        const seconds = Math.floor((elapsed % MINUTE) / SECOND);
+
+        daysEl.textContent = two(days);
+        hoursEl.textContent = two(hours);
+        minutesEl.textContent = two(minutes);
+        secondsEl.textContent = two(seconds);
+
+        const parts = Object.fromEntries(
+          israelClock.formatToParts(new Date(now))
+            .filter(part => part.type !== 'literal')
+            .map(part => [part.type, part.value])
+        );
+
+        israelNowEl.textContent = `Israel now · ${parts.day} ${String(parts.month).toUpperCase()} ${parts.year} · ${parts.hour}:${parts.minute}:${parts.second}`;
+        timerRegion.setAttribute('aria-label', `Time since Point Zero: ${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`);
+
+        const delay = Math.max(40, SECOND - (Date.now() % SECOND) + 8);
+        window.setTimeout(updateClock, delay);
+      }
+
+      updateClock();
+
+      const canvas = document.getElementById('stars');
+      const context = canvas.getContext('2d', { alpha: true });
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let stars = [];
+      let last = 0;
+
+      function makeStars() {
+        const count = Math.min(250, Math.max(90, Math.floor((width * height) / 6500)));
+        stars = Array.from({ length: count }, (_, index) => ({
+          x: Math.random() * width,
+          y: Math.random() * height * .79,
+          size: Math.random() * 1.25 + .18,
+          alpha: Math.random() * .63 + .13,
+          phase: Math.random() * Math.PI * 2,
+          speed: .16 + Math.random() * .56,
+          drift: (Math.random() - .5) * .055,
+          warm: index % 17 === 0
+        }));
+      }
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        makeStars();
+      }
+
+      function draw(time = 0) {
+        context.clearRect(0, 0, width, height);
+        const t = time * .001;
+
+        for (const star of stars) {
+          const twinkle = reduceMotion ? 1 : .72 + Math.sin(t * star.speed + star.phase) * .28;
+          const a = Math.max(.03, star.alpha * twinkle);
+          const x = star.x + (reduceMotion ? 0 : Math.sin(t * .07 + star.phase) * 2.2);
+          const y = star.y + (reduceMotion ? 0 : star.drift * t * 11);
+          context.beginPath();
+          context.fillStyle = star.warm ? `rgba(255,232,190,${a})` : `rgba(225,220,255,${a})`;
+          context.arc(x, y, star.size, 0, Math.PI * 2);
+          context.fill();
+        }
+
+        if (!reduceMotion) requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize, { passive: true });
+      resize();
+      draw(last);
+    })();
   </script>
 </body>
 </html>
